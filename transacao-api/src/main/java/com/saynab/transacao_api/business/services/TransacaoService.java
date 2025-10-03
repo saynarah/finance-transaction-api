@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,9 +22,11 @@ public class TransacaoService {
 
         log.info("Iniciado o processamento de gravar transações " + dto);
 
-        if(dto.dataHora().isAfter(OffsetDateTime.now())){
+        if(dto.dataHora().isAfter(OffsetDateTime.now(ZoneOffset.of("-03:00")).plusSeconds(30))){
             log.error("Data e hora maiores que a data atual");
             throw new UnprocessableEntity("Data e hora maiores que a data e hora atuais.");
+                   // +" Data e hora atual: "+ OffsetDateTime.now(ZoneOffset.of("-03:00")).toString()+
+                   // " Data e hora informada: "+dto.dataHora().toString());
 
         }
 
@@ -49,7 +52,7 @@ public class TransacaoService {
 
         log.info("Iniciada as buscas de transações pelo período de tempo " + intervaloBusca);
 
-        OffsetDateTime dataHoraIntervalo = OffsetDateTime.now().minusSeconds(intervaloBusca);
+        OffsetDateTime dataHoraIntervalo = OffsetDateTime.now(ZoneOffset.of("-03:00")).minusSeconds(intervaloBusca+30);
 
         log.info("Retorno de transações com sucesso");
         return listaTransacaoes.stream()
